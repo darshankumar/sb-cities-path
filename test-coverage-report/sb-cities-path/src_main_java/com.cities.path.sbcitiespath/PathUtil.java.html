@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PathUtil.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">com.cities.path.sbcitiespath (21-Jul-2020 9:58:46 am)</a> &gt; <a href="../../index.html" class="el_group">sb-cities-path</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cities.path.sbcitiespath</a> &gt; <span class="el_source">PathUtil.java</span></div><h1>PathUtil.java</h1><pre class="source lang-java linenums">package com.cities.path.sbcitiespath;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+@Component
+<span class="fc" id="L25">public class PathUtil {</span>
+<span class="fc" id="L26">	private static final Log logger = LogFactory.getLog(PathUtil.class);</span>
+<span class="fc" id="L27">	private Map&lt;String, City&gt; cityMap = new HashMap&lt;&gt;();</span>
+
+	@Value(&quot;${data.file}&quot;)
+	private String citidata;
+
+	@Autowired
+	private ResourceLoader resourceLoader;
+
+	public static boolean isPathFound(City start, City end) {
+
+<span class="fc" id="L37">		logger.info(&quot;start city : &quot; + start.getName() + &quot;, end city: &quot; + end.getName());</span>
+
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">		if (start.equals(end))</span>
+<span class="nc" id="L40">			return true; // if same city return true</span>
+
+<span class="fc bfc" id="L42" title="All 2 branches covered.">		if (start.getConnection().contains(end))</span>
+<span class="fc" id="L43">			return true; // if origin is direct connection to destination</span>
+
+<span class="fc" id="L45">		Set&lt;City&gt; visited = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L46">		visited.add(start); // visiting to start</span>
+
+<span class="fc" id="L48">		Deque&lt;City&gt; bucketlist = new ArrayDeque&lt;&gt;();</span>
+<span class="fc" id="L49">		bucketlist.addAll(start.getConnection());</span>
+
+		// Now we need to check in connection of connection
+<span class="fc bfc" id="L52" title="All 2 branches covered.">		while (!bucketlist.isEmpty()) {</span>
+
+<span class="fc" id="L54">			City city = bucketlist.getLast(); // take each city</span>
+
+<span class="fc bfc" id="L56" title="All 2 branches covered.">			if (city.equals(end))</span>
+<span class="fc" id="L57">				return true; // if it end city then return true</span>
+
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">			if (!visited.contains(city)) { // do we already verified it</span>
+<span class="fc" id="L60">				visited.add(city); //</span>
+<span class="fc" id="L61">				bucketlist.addAll(city.getConnection()); // need to check in connection of connection</span>
+<span class="fc" id="L62">				bucketlist.removeAll(visited); // remove already visited one</span>
+<span class="fc" id="L63">			} else {</span>
+<span class="nc" id="L64">				bucketlist.remove(city); // if verified then remove it</span>
+			}
+		}
+
+<span class="fc" id="L68">		return false;</span>
+	}
+
+	public String loadConutryMapFromFile() throws IOException {
+<span class="fc" id="L72">		cityMap.clear(); // remove old file data</span>
+<span class="fc" id="L73">		logger.info(&quot;Reading data&quot;);</span>
+
+<span class="fc" id="L75">		Resource resource = resourceLoader.getResource(citidata);</span>
+
+		InputStream is;
+
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">		if (!resource.exists()) {</span>
+			// file on the filesystem path
+<span class="nc" id="L81">			is = new FileInputStream(new File(citidata));</span>
+<span class="nc" id="L82">		} else {</span>
+			// file is a classpath resource
+<span class="fc" id="L84">			is = resource.getInputStream();</span>
+		}
+
+<span class="fc" id="L87">		Scanner scanner = new Scanner(is);</span>
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">		while (scanner.hasNext()) {</span>
+
+<span class="fc" id="L91">			String line = scanner.nextLine();</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">			if (StringUtils.isEmpty(line))</span>
+<span class="nc" id="L93">				continue;</span>
+
+<span class="fc" id="L95">			logger.info(line);</span>
+
+<span class="fc" id="L97">			String[] split = line.split(&quot;,&quot;);</span>
+<span class="fc" id="L98">			String start = split[0].trim();</span>
+<span class="fc" id="L99">			String end = split[1].trim();</span>
+
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">			if (!start.equals(end)) {</span>
+<span class="fc" id="L102">				City A = cityMap.getOrDefault(start, new City(start));</span>
+<span class="fc" id="L103">				City B = cityMap.getOrDefault(end, new City(end));</span>
+
+<span class="fc" id="L105">				A.getConnection().add(B);</span>
+<span class="fc" id="L106">				B.getConnection().add(A);</span>
+
+<span class="fc" id="L108">				cityMap.put(A.getName(), A);</span>
+<span class="fc" id="L109">				cityMap.put(B.getName(), B);</span>
+			}
+		}
+
+<span class="fc" id="L113">		logger.info(&quot;Map: &quot; + cityMap);</span>
+
+<span class="fc" id="L115">		return &quot;OK&quot;;</span>
+	}
+
+	public Map&lt;String, City&gt; getCityMap() {
+<span class="fc" id="L119">		return cityMap;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>com.cities.path.sbcitiespath (21-Jul-2020 9:58:46 am)</div></body></html>

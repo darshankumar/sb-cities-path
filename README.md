@@ -49,3 +49,8 @@ o  A well-documented project that utilizes various best
 practices. 
 o  Well-written Unit Tests (which need to pass) & comprehensive 
 test coverage. 
+
+-------------------
+Swagger Doc:
+
+http://localhost:8080/swagger-ui.html#/

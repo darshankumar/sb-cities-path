@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>PathUtilTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">com.cities.path.sbcitiespath (21-Jul-2020 12:40:01 am)</a> &gt; <a href="../../index.html" class="el_group">sb-cities-path</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.cities.path.sbcitiespath</a> &gt; <span class="el_source">PathUtilTest.java</span></div><h1>PathUtilTest.java</h1><pre class="source lang-java linenums">package com.cities.path.sbcitiespath;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+<span class="fc" id="L6">public class PathUtilTest extends MainTest {</span>
+
+	@Test
+	public void testCityMap() {
+<span class="fc" id="L10">		Assert.assertNotEquals(&quot;Citi Map Can't be Empty&quot;, pathutil.getCityMap().size(), 0);</span>
+<span class="fc" id="L11">		Assert.assertEquals(&quot;Citi Map Size is 6 &quot;, pathutil.getCityMap().size(), 6);</span>
+<span class="fc" id="L12">	}</span>
+
+	@Test
+	public void testisPathFound() {
+<span class="fc" id="L16">		City Boston = pathutil.getCityMap().get(&quot;Boston&quot;);</span>
+<span class="fc" id="L17">		City Newark = pathutil.getCityMap().get(&quot;Newark&quot;);</span>
+<span class="fc" id="L18">		City Philadelphia = pathutil.getCityMap().get(&quot;Philadelphia&quot;);</span>
+<span class="fc" id="L19">		City Albany = pathutil.getCityMap().get(&quot;Albany&quot;);</span>
+<span class="fc" id="L20">		Assert.assertEquals(&quot;Boston is connected to Newark &quot;, pathutil.isPathFound(Boston, Newark), true);</span>
+<span class="fc" id="L21">		Assert.assertEquals(&quot;Boston is connected to Newark &quot;, pathutil.isPathFound(Boston, Philadelphia), true);</span>
+<span class="fc" id="L22">		Assert.assertEquals(&quot;Boston is not connected to Newark &quot;, pathutil.isPathFound(Philadelphia, Albany), false);</span>
+<span class="fc" id="L23">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>com.cities.path.sbcitiespath (21-Jul-2020 12:40:01 am)</div></body></html>

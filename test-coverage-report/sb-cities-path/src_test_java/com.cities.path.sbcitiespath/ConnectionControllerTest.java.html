@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ConnectionControllerTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">com.cities.path.sbcitiespath (21-Jul-2020 9:58:46 am)</a> &gt; <a href="../../index.html" class="el_group">sb-cities-path</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">com.cities.path.sbcitiespath</a> &gt; <span class="el_source">ConnectionControllerTest.java</span></div><h1>ConnectionControllerTest.java</h1><pre class="source lang-java linenums">package com.cities.path.sbcitiespath;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+
+<span class="fc" id="L13">public class ConnectionControllerTest extends MainTest {</span>
+
+<span class="fc" id="L15">	private final static Log logger = LogFactory.getLog(ConnectionControllerTest.class);</span>
+
+	@Autowired
+	private TestRestTemplate restTemplate;
+
+	@Test
+	public void isConnectedIT() {
+
+<span class="fc" id="L23">		Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L24">		params.put(&quot;origin&quot;, &quot;Boston&quot;);</span>
+<span class="fc" id="L25">		params.put(&quot;destination&quot;, &quot;Newark&quot;);</span>
+
+<span class="fc" id="L27">		String body = restTemplate.getForObject(&quot;/connected?origin={origin}&amp;destination={destination}&quot;, String.class,</span>
+<span class="fc" id="L28">				params);</span>
+<span class="fc" id="L29">		Assert.assertEquals(&quot;Boston has path to Newark&quot;, &quot;yes&quot;, body);</span>
+<span class="fc" id="L30">	}</span>
+
+	@Test
+	public void isNotConnectedIT() {
+
+<span class="fc" id="L35">		Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L36">		params.put(&quot;origin&quot;, &quot;Philadelphia&quot;);</span>
+<span class="fc" id="L37">		params.put(&quot;destination&quot;, &quot;Albany&quot;);</span>
+
+<span class="fc" id="L39">		String body = restTemplate.getForObject(&quot;/connected?origin={origin}&amp;destination={destination}&quot;, String.class,</span>
+<span class="fc" id="L40">				params);</span>
+<span class="fc" id="L41">		Assert.assertEquals(&quot;Philadelphia has no path to Albany&quot;, &quot;no&quot;, body);</span>
+<span class="fc" id="L42">	}</span>
+	
+	@Test
+	public void isExceptionConnectedIT() {
+
+<span class="fc" id="L47">		Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L48">		params.put(&quot;origin&quot;, &quot;Philadelphia&quot;);</span>
+<span class="fc" id="L49">		params.put(&quot;destination&quot;, &quot;&quot;); // end is empty</span>
+
+<span class="fc" id="L51">		String body = restTemplate.getForObject(&quot;/connected?origin={origin}&amp;destination={destination}&quot;, String.class,</span>
+<span class="fc" id="L52">				params);</span>
+<span class="fc" id="L53">		Assert.assertEquals(body, &quot;No Data Found&quot;);</span>
+		
+<span class="fc" id="L55">		Map&lt;String, String&gt; params2 = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L56">		params.put(&quot;origin&quot;, &quot;&quot;); // start is empty</span>
+<span class="fc" id="L57">		params.put(&quot;destination&quot;, &quot;Albany&quot;);</span>
+
+<span class="fc" id="L59">		String body2 = restTemplate.getForObject(&quot;/connected?origin={origin}&amp;destination={destination}&quot;, String.class,</span>
+<span class="fc" id="L60">				params);</span>
+<span class="fc" id="L61">		Assert.assertEquals(body2, &quot;No Data Found&quot;);</span>
+		
+<span class="fc" id="L63">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>com.cities.path.sbcitiespath (21-Jul-2020 9:58:46 am)</div></body></html>

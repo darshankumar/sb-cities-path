@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>ConnectionController.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">com.cities.path.sbcitiespath (21-Jul-2020 9:58:46 am)</a> &gt; <a href="../../index.html" class="el_group">sb-cities-path</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">com.cities.path.sbcitiespath</a> &gt; <span class="el_source">ConnectionController.java</span></div><h1>ConnectionController.java</h1><pre class="source lang-java linenums">package com.cities.path.sbcitiespath;
+
+import java.io.IOException;
+import java.util.Objects;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+@RestController
+<span class="fc" id="L21">public class ConnectionController {</span>
+<span class="fc" id="L22">	private final static Log logger = LogFactory.getLog(ConnectionController.class);</span>
+
+	@Autowired
+	private PathUtil pathUtil;
+
+	@ApiOperation(value = &quot;Find if a path exists between two cities&quot;, notes = &quot;Returns true if cites connected and false otherwise &quot;, response = String.class)
+	@ApiResponses({
+			@ApiResponse(code = 404, message = &quot;Either destination or origin city does not exist or invalid&quot;, response = NullPointerException.class),
+			@ApiResponse(code = 500, message = &quot;Generic error&quot;, response = Exception.class) })
+	@GetMapping(value = &quot;/connected&quot;, produces = &quot;text/plain&quot;)
+	public String isConnected(@RequestParam String origin, @RequestParam String destination) {
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">		if (pathUtil.getCityMap().size() == 0) {</span>
+<span class="nc" id="L34">			logger.error(&quot;Data is not available&quot;);</span>
+<span class="nc" id="L35">			return &quot;no data exist&quot;;</span>
+		}
+<span class="fc" id="L37">		City start = pathUtil.getCityMap().get(origin);</span>
+<span class="fc" id="L38">		City end = pathUtil.getCityMap().get(destination);</span>
+
+<span class="fc" id="L40">		Objects.requireNonNull(start, &quot;Unknown City &quot; + origin);</span>
+<span class="fc" id="L41">		Objects.requireNonNull(end, &quot;Unknown City &quot; + destination);</span>
+
+<span class="fc bfc" id="L43" title="All 2 branches covered.">		return PathUtil.isPathFound(start, end) ? &quot;yes&quot; : &quot;no&quot;;</span>
+	}
+
+	@GetMapping(value = &quot;/loaddata&quot;, produces = &quot;text/plain&quot;)
+	public String loadConutryMapFromFile() throws IOException {
+<span class="nc" id="L48">		pathUtil.loadConutryMapFromFile(); // load from file externally no restart needed</span>
+<span class="nc" id="L49">		return &quot;OK&quot;;</span>
+	}
+
+	@ExceptionHandler(NullPointerException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public String cityError() {
+<span class="fc" id="L55">		return &quot;No Data Found&quot;;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span>com.cities.path.sbcitiespath (21-Jul-2020 9:58:46 am)</div></body></html>
